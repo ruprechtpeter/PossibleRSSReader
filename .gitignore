@@ -1,0 +1,31 @@
+#Windows thumbnail db
+Thumbs.db
+
+#Mac desktop services store
+.DS_Store
+
+#build application files
+*.apk
+*.ap_
+
+#Dalvik executable files
+*.dex
+
+#java class files
+*.class
+
+#generated files
+bin/
+gen/
+
+#local configuration file
+local.properties
+
+#Android Studio 
+.gradle
+.idea
+/local.properties
+/build
+/*/build
+*.iml
+
