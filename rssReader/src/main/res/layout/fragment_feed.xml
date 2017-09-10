@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:id="@+id/lyt_feed_input"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/et_feed"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:textSize="16sp"
+            android:hint="Feed url"
+            android:text="http://index.hu/24ora/rss/"/>
+        <Button
+            android:id="@+id/btn_feed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Feed" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/lyt_feed_info"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="10dp">
+
+        <TextView
+            android:id="@+id/tv_feed_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textSize="16dp"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:id="@+id/tv_feed_link"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textSize="14dp"/>
+
+        <TextView
+            android:id="@+id/tv_feed_description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textSize="14dp"/>
+    </LinearLayout>
+
+
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/sw_swipe"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:padding="10dp">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_feed_list"
+            android:layout_height="match_parent"
+            android:layout_width="match_parent">
+
+        </android.support.v7.widget.RecyclerView>
+    </android.support.v4.widget.SwipeRefreshLayout>
+</LinearLayout>
