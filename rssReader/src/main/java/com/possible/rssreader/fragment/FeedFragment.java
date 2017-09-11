@@ -45,6 +45,9 @@ public class FeedFragment extends Fragment {
     private TextView tv_feed_description;
     private SwipeRefreshLayout sw_swipe;
     private RecyclerView rv_feed_list;
+    private Button btn_save;
+    private Button btn_load;
+    private Button btn_share;
 
     private List<RssFeedModel> rssFeedModelList;
     private static final String TAG = MainActivity.class.getName();
@@ -68,8 +71,35 @@ public class FeedFragment extends Fragment {
                 onClickFeed();
             }
         });
+        btn_save.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                saveLink();
+            }
+        });
+        btn_load.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                loadLink();
+            }
+        });
+        btn_share.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                shareLink();
+            }
+        });
 
         return view;
+    }
+
+    private void shareLink() {
+    }
+
+    private void loadLink() {
+    }
+
+    private void saveLink() {
     }
 
     private void onClickFeed() {
@@ -85,6 +115,9 @@ public class FeedFragment extends Fragment {
         sw_swipe = (SwipeRefreshLayout) view.findViewById(R.id.sw_swipe);
         rv_feed_list = (RecyclerView) view.findViewById(R.id.rv_feed_list);
         rv_feed_list.setLayoutManager(new LinearLayoutManager(view.getContext()));
+        btn_save = (Button) view.findViewById(R.id.btn_save);
+        btn_load = (Button) view.findViewById(R.id.btn_load);
+        btn_share = (Button) view.findViewById(R.id.btn_share);
     }
 
     private class RssFeedTask extends AsyncTask<Void, Void, Boolean> {
