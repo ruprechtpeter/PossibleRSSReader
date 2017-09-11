@@ -1,10 +1,14 @@
 package com.possible.rssreader.fragment;
 
+import android.content.DialogInterface;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -12,6 +16,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -20,6 +25,7 @@ import android.widget.Toast;
 import com.possible.rssreader.R;
 import com.possible.rssreader.activity.MainActivity;
 import com.possible.rssreader.model.RssFeedModel;
+import com.possible.rssreader.util.LinkManager;
 import com.possible.rssreader.util.RssAdapter;
 import com.possible.rssreader.util.RssParser;
 
@@ -29,7 +35,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -47,18 +52,43 @@ public class FeedFragment extends Fragment {
     private RecyclerView rv_feed_list;
     private Button btn_save;
     private Button btn_load;
+    private Button btn_delete;
     private Button btn_share;
 
     private List<RssFeedModel> rssFeedModelList;
     private static final String TAG = MainActivity.class.getName();
+
+    private LinkManager linkManager;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_feed, container, false);
 
+        linkManager = new LinkManager(getContext());
         init(view);
 
+        setOnClickListeners();
+
+        return view;
+    }
+
+    private void init(View view) {
+        et_feed = (EditText) view.findViewById(R.id.et_feed);
+        btn_feed = (Button) view.findViewById(R.id.btn_feed);
+        tv_feed_title = (TextView) view.findViewById(R.id.tv_feed_title);
+        tv_feed_link = (TextView) view.findViewById(R.id.tv_feed_link);
+        tv_feed_description = (TextView) view.findViewById(R.id.tv_feed_description);
+        sw_swipe = (SwipeRefreshLayout) view.findViewById(R.id.sw_swipe);
+        rv_feed_list = (RecyclerView) view.findViewById(R.id.rv_feed_list);
+        rv_feed_list.setLayoutManager(new LinearLayoutManager(view.getContext()));
+        btn_save = (Button) view.findViewById(R.id.btn_save);
+        btn_load = (Button) view.findViewById(R.id.btn_load);
+        btn_delete = (Button) view.findViewById(R.id.btn_delete);
+        btn_share = (Button) view.findViewById(R.id.btn_share);
+    }
+
+    private void setOnClickListeners() {
         btn_feed.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -74,50 +104,55 @@ public class FeedFragment extends Fragment {
         btn_save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                saveLink();
+                linkManager.saveLink(et_feed.getText().toString());
             }
         });
         btn_load.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                loadLink();
+                List<String> links = linkManager.loadLink();
+                createDialog(links);
+            }
+        });
+        btn_delete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                linkManager.deleteLink(et_feed.getText().toString());
             }
         });
         btn_share.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                shareLink();
+                linkManager.shareLink(et_feed.getText().toString());
+            }
+        });
+    }
+
+    private void createDialog(List<String> links) {
+        AlertDialog.Builder builderSingle = new AlertDialog.Builder(getContext());
+        builderSingle.setTitle("Select A Link");
+
+        final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.select_dialog_singlechoice);
+        arrayAdapter.addAll(links);
+
+        builderSingle.setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
             }
         });
 
-        return view;
-    }
-
-    private void shareLink() {
-    }
-
-    private void loadLink() {
-    }
-
-    private void saveLink() {
+        builderSingle.setAdapter(arrayAdapter, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                et_feed.setText(arrayAdapter.getItem(which));
+            }
+        });
+        builderSingle.show();
     }
 
     private void onClickFeed() {
         new RssFeedTask().execute((Void) null);
-    }
-
-    private void init(View view) {
-        et_feed = (EditText) view.findViewById(R.id.et_feed);
-        btn_feed = (Button) view.findViewById(R.id.btn_feed);
-        tv_feed_title = (TextView) view.findViewById(R.id.tv_feed_title);
-        tv_feed_link = (TextView) view.findViewById(R.id.tv_feed_link);
-        tv_feed_description = (TextView) view.findViewById(R.id.tv_feed_description);
-        sw_swipe = (SwipeRefreshLayout) view.findViewById(R.id.sw_swipe);
-        rv_feed_list = (RecyclerView) view.findViewById(R.id.rv_feed_list);
-        rv_feed_list.setLayoutManager(new LinearLayoutManager(view.getContext()));
-        btn_save = (Button) view.findViewById(R.id.btn_save);
-        btn_load = (Button) view.findViewById(R.id.btn_load);
-        btn_share = (Button) view.findViewById(R.id.btn_share);
     }
 
     private class RssFeedTask extends AsyncTask<Void, Void, Boolean> {
@@ -127,9 +162,7 @@ public class FeedFragment extends Fragment {
         @Override
         protected void onPreExecute() {
             sw_swipe.setRefreshing(true);
-
             rssParser = new RssParser(TAG);
-
             tv_feed_title.setText("");
             tv_feed_link.setText("");
             tv_feed_description.setText("");
@@ -137,7 +170,6 @@ public class FeedFragment extends Fragment {
                 rssFeedModelList.clear();
                 rv_feed_list.setAdapter(new RssAdapter(rssFeedModelList));
             }
-
             rssUrl = et_feed.getText().toString();
         }
 
@@ -165,7 +197,6 @@ public class FeedFragment extends Fragment {
                 } else {
                     return false;
                 }
-
             } catch (IOException e) {
                 Log.e(TAG, "Error", e);
             } catch (XmlPullParserException e) {
@@ -187,7 +218,6 @@ public class FeedFragment extends Fragment {
                 Toast.makeText(getContext(),"Enter a valid Rss feed url", Toast.LENGTH_LONG).show();
             }
         }
-
     }
 
 }
