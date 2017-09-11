@@ -1,17 +1,14 @@
 package com.possible.rssreader.util;
 
-import android.util.Log;
 import android.util.Xml;
 
 import com.possible.rssreader.model.RssFeedModel;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
-import org.xmlpull.v1.XmlPullParserFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -71,18 +68,22 @@ public class RssParser {
                 continue;
             }
 
-            if (name.equals(TAG_TITLE)) {
-                if (title == null) {
-                    title = readArticle(parser, TAG_TITLE);
-                }
-            } else if (name.equals(TAG_LINK)) {
-                if (link == null) {
-                    link = readArticle(parser, TAG_LINK);
-                }
-            } else if (name.equals(TAG_DESCRIPTION)) {
-                if (description == null) {
-                    description = readArticle(parser, TAG_DESCRIPTION);
-                }
+            switch (name) {
+                case TAG_TITLE:
+                    if (title == null) {
+                        title = readArticle(parser, TAG_TITLE);
+                    }
+                    break;
+                case TAG_LINK:
+                    if (link == null) {
+                        link = readArticle(parser, TAG_LINK);
+                    }
+                    break;
+                case TAG_DESCRIPTION:
+                    if (description == null) {
+                        description = readArticle(parser, TAG_DESCRIPTION);
+                    }
+                    break;
             }
 
             if (title != null && link != null && description != null) {

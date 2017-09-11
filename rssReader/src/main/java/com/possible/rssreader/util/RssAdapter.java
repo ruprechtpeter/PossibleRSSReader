@@ -26,9 +26,8 @@ public class RssAdapter extends RecyclerView.Adapter<RssAdapter.RssFeedModelView
     @Override
     public RssFeedModelViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.rss_feed_item, parent, false);
-        RssFeedModelViewHolder holder = new RssFeedModelViewHolder(view);
 
-        return holder;
+        return new RssFeedModelViewHolder(view);
     }
 
     @Override
@@ -44,10 +43,10 @@ public class RssAdapter extends RecyclerView.Adapter<RssAdapter.RssFeedModelView
         return rssFeedModelList.size();
     }
 
-    public static class RssFeedModelViewHolder extends RecyclerView.ViewHolder {
+    static class RssFeedModelViewHolder extends RecyclerView.ViewHolder {
         private View view;
 
-        public RssFeedModelViewHolder(View v) {
+        RssFeedModelViewHolder(View v) {
             super(v);
 
             this.view = v;

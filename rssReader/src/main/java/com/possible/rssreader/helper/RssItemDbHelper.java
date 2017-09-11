@@ -5,7 +5,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.provider.BaseColumns;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -18,12 +17,12 @@ import java.util.List;
 public class RssItemDbHelper extends SQLiteOpenHelper {
 
     private static final String TAG = RssItemDbHelper.class.getName();
-    public static final int DATABASE_VERSION = 1;
-    public static final String DATABASE_NAME = "RssItem.db";
+    private static final int DATABASE_VERSION = 1;
+    private static final String DATABASE_NAME = "RssItem.db";
 
-    public static final String TABLE_NAME = "rssitem";
-    public static final String COLUMN_NAME_ID = "id";
-    public static final String COLUMN_NAME_RSSLINK = "rsslink";
+    private static final String TABLE_NAME = "rssitem";
+    private static final String COLUMN_NAME_ID = "id";
+    private static final String COLUMN_NAME_RSSLINK = "rsslink";
 
     private static final String SQL_CREATE_ENTRIES =
             "CREATE TABLE " + TABLE_NAME + " (" +
@@ -69,9 +68,7 @@ public class RssItemDbHelper extends SQLiteOpenHelper {
             ContentValues values = new ContentValues();
             values.put(COLUMN_NAME_RSSLINK, link);
 
-            long id = db.insert(TABLE_NAME, null, values);
-
-            return id;
+            return db.insert(TABLE_NAME, null, values);
         } else {
             return -1;
         }

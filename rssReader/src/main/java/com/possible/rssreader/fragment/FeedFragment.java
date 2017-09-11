@@ -1,8 +1,6 @@
 package com.possible.rssreader.fragment;
 
 import android.content.DialogInterface;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -130,12 +128,12 @@ public class FeedFragment extends Fragment {
 
     private void createDialog(List<String> links) {
         AlertDialog.Builder builderSingle = new AlertDialog.Builder(getContext());
-        builderSingle.setTitle("Select A Link");
+        builderSingle.setTitle(R.string.select_link);
 
         final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(getContext(), android.R.layout.select_dialog_singlechoice);
         arrayAdapter.addAll(links);
 
-        builderSingle.setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+        builderSingle.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
@@ -166,6 +164,7 @@ public class FeedFragment extends Fragment {
             tv_feed_title.setText("");
             tv_feed_link.setText("");
             tv_feed_description.setText("");
+
             if (rssFeedModelList != null) {
                 rssFeedModelList.clear();
                 rv_feed_list.setAdapter(new RssAdapter(rssFeedModelList));
@@ -197,9 +196,7 @@ public class FeedFragment extends Fragment {
                 } else {
                     return false;
                 }
-            } catch (IOException e) {
-                Log.e(TAG, "Error", e);
-            } catch (XmlPullParserException e) {
+            } catch (IOException | XmlPullParserException e) {
                 Log.e(TAG, "Error", e);
             }
             return false;
