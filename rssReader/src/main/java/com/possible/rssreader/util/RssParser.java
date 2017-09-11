@@ -21,7 +21,6 @@ import java.util.List;
 
 public class RssParser {
 
-    private String tag;
     public RssFeedModel rootItem;
 
     private static final String TAG_TITLE = "title";
@@ -31,8 +30,7 @@ public class RssParser {
     private static final String TAG_ITEM = "item";
     private final String ns = null;
 
-    public RssParser(String tag) {
-        this.tag = tag;
+    public RssParser() {
     }
 
     public List<RssFeedModel> rssParsing(InputStream inputStream) throws  XmlPullParserException, IOException {

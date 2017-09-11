@@ -21,18 +21,17 @@ public class RssItemDbHelper extends SQLiteOpenHelper {
     public static final int DATABASE_VERSION = 1;
     public static final String DATABASE_NAME = "RssItem.db";
 
-    public static class RssItemEntry implements BaseColumns {
-        public static final String TABLE_NAME = "rssitem";
-        public static final String COLUMN_NAME_RSSLINK = "rsslink";
-    }
+    public static final String TABLE_NAME = "rssitem";
+    public static final String COLUMN_NAME_ID = "id";
+    public static final String COLUMN_NAME_RSSLINK = "rsslink";
 
     private static final String SQL_CREATE_ENTRIES =
-            "CREATE TABLE " + RssItemEntry.TABLE_NAME + " (" +
-                    RssItemEntry._ID + " INTEGER PRIMARY KEY," +
-                    RssItemEntry.COLUMN_NAME_RSSLINK + " TEXT)";
+            "CREATE TABLE " + TABLE_NAME + " (" +
+                    COLUMN_NAME_ID + " INTEGER PRIMARY KEY," +
+                    COLUMN_NAME_RSSLINK + " TEXT)";
 
     private static final String SQL_DELETE_ENTRIES =
-            "DROP TABLE IF EXISTS " + RssItemEntry.TABLE_NAME;
+            "DROP TABLE IF EXISTS " + TABLE_NAME;
 
     public RssItemDbHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -56,7 +55,7 @@ public class RssItemDbHelper extends SQLiteOpenHelper {
 
     private boolean findLink(String link) {
         SQLiteDatabase db = this.getReadableDatabase();
-        String selectQuery = "SELECT * FROM " + RssItemEntry.TABLE_NAME + " WHERE " + RssItemEntry.COLUMN_NAME_RSSLINK + " = \"" + link + "\"";
+        String selectQuery = "SELECT * FROM " + TABLE_NAME + " WHERE " + COLUMN_NAME_RSSLINK + " = \"" + link + "\"";
         Log.e(TAG, selectQuery);
         Cursor c = db.rawQuery(selectQuery, null);
 
@@ -68,9 +67,9 @@ public class RssItemDbHelper extends SQLiteOpenHelper {
             SQLiteDatabase db = this.getWritableDatabase();
 
             ContentValues values = new ContentValues();
-            values.put(RssItemEntry.COLUMN_NAME_RSSLINK, link);
+            values.put(COLUMN_NAME_RSSLINK, link);
 
-            long id = db.insert(RssItemEntry.TABLE_NAME, null, values);
+            long id = db.insert(TABLE_NAME, null, values);
 
             return id;
         } else {
@@ -82,13 +81,13 @@ public class RssItemDbHelper extends SQLiteOpenHelper {
         List<String> links = new ArrayList<>();
 
         SQLiteDatabase db = this.getReadableDatabase();
-        String selectQuery = "SELECT * FROM " + RssItemEntry.TABLE_NAME;
+        String selectQuery = "SELECT * FROM " + TABLE_NAME;
         Log.e(TAG, selectQuery);
         Cursor c = db.rawQuery(selectQuery, null);
 
         if (c.moveToFirst()) {
             do {
-                links.add(c.getString(c.getColumnIndex(RssItemEntry.COLUMN_NAME_RSSLINK)));
+                links.add(c.getString(c.getColumnIndex(COLUMN_NAME_RSSLINK)));
             } while (c.moveToNext());
         }
 
@@ -97,7 +96,7 @@ public class RssItemDbHelper extends SQLiteOpenHelper {
 
     public int deleteLink(String link) {
         SQLiteDatabase db = this.getWritableDatabase();
-        return db.delete(RssItemEntry.TABLE_NAME, RssItemEntry.COLUMN_NAME_RSSLINK + " = ?", new String[] { String.valueOf(link) });
+        return db.delete(TABLE_NAME, COLUMN_NAME_RSSLINK + " = ?", new String[] { String.valueOf(link) });
     }
 
 

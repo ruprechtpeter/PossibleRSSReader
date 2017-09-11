@@ -132,7 +132,7 @@ public class FeedFragment extends Fragment {
         AlertDialog.Builder builderSingle = new AlertDialog.Builder(getContext());
         builderSingle.setTitle("Select A Link");
 
-        final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(getContext(), android.R.layout.select_dialog_singlechoice);
+        final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(getContext(), android.R.layout.select_dialog_singlechoice);
         arrayAdapter.addAll(links);
 
         builderSingle.setNegativeButton("cancel", new DialogInterface.OnClickListener() {
@@ -162,7 +162,7 @@ public class FeedFragment extends Fragment {
         @Override
         protected void onPreExecute() {
             sw_swipe.setRefreshing(true);
-            rssParser = new RssParser(TAG);
+            rssParser = new RssParser();
             tv_feed_title.setText("");
             tv_feed_link.setText("");
             tv_feed_description.setText("");

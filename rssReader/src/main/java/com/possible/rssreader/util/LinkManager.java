@@ -46,10 +46,12 @@ public class LinkManager {
     }
 
     public void shareLink(String link) {
-        Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
-        sharingIntent.setType("text/plain");
-        sharingIntent.putExtra(Intent.EXTRA_TEXT, link);
-        context.startActivity(Intent.createChooser(sharingIntent, "Share via"));
+        if (!link.equals("")) {
+            Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
+            sharingIntent.setType("text/plain");
+            sharingIntent.putExtra(Intent.EXTRA_TEXT, link);
+            context.startActivity(Intent.createChooser(sharingIntent, "Share via"));
+        }
     }
 
 }
