@@ -144,9 +144,21 @@ public class FeedFragment extends Fragment {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 et_feed.setText(arrayAdapter.getItem(which));
+                cleanFeedList();
             }
         });
         builderSingle.show();
+    }
+
+    private void cleanFeedList() {
+        tv_feed_title.setText("");
+        tv_feed_link.setText("");
+        tv_feed_description.setText("");
+
+        if (rssFeedModelList != null) {
+            rssFeedModelList.clear();
+            rv_feed_list.setAdapter(new RssAdapter(rssFeedModelList));
+        }
     }
 
     private void onClickFeed() {
@@ -161,14 +173,7 @@ public class FeedFragment extends Fragment {
         protected void onPreExecute() {
             sw_swipe.setRefreshing(true);
             rssParser = new RssParser();
-            tv_feed_title.setText("");
-            tv_feed_link.setText("");
-            tv_feed_description.setText("");
-
-            if (rssFeedModelList != null) {
-                rssFeedModelList.clear();
-                rv_feed_list.setAdapter(new RssAdapter(rssFeedModelList));
-            }
+            cleanFeedList();
             rssUrl = et_feed.getText().toString();
         }
 
@@ -189,6 +194,8 @@ public class FeedFragment extends Fragment {
                 connection.setDoInput(true);
                 connection.connect();
 
+                int responseCode = connection.getResponseCode();
+                String message = connection.getResponseMessage();
                 if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
                     InputStream inputStream = connection.getInputStream();
                     rssFeedModelList = rssParser.rssParsing(inputStream);
